@@ -9,7 +9,7 @@ pub struct GatchaChance {
     draw_count: Vec<u32>,
 }
 
-
+#[allow(dead_code)]
 impl GatchaChance {
     pub fn new() -> GatchaChance {
         GatchaChance { chances: Vec::from([2147483647, 536870911, 322122547, 214748364, 85899345, 32212254, 42949673, 10737418, 429496]), draw_count: Vec::from([5, 3, 1, 1, 1, 1, 1, 1, 1]) }
