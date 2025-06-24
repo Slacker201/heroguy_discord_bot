@@ -50,6 +50,9 @@ pub async fn run_command(cmd: &CommandInteraction, context: Context, _interactio
         Some(item) => {
             println!("Removing item id: {}, count: {}", item_id, count);
             item.count = item.count.saturating_sub(count);
+            if item.count == 0 {
+                user_data.clear_item(item_id);
+            }
             cache.save_user_data(user_data);
         },
         None => println!("Item not found"),

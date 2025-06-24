@@ -51,6 +51,10 @@ impl UserData {
             });
     }
 
+    pub fn clear_item(&mut self, id: u64) {
+        let _ = &self.inventory.remove(&id);
+    }
+
     pub fn get_item(&mut self, id: u64) -> Option<&mut Item> {
         self.inventory.get_mut(&id)
     }
