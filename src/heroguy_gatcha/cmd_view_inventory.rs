@@ -31,7 +31,7 @@ pub async fn run_command(cmd: &CommandInteraction, context: Context, _interactio
 
     let heading = "Inventory";
     let separator = "---------";
-    let body = user_data.clone().inventory_to_string();
+    let body = user_data.inventory_to_string();
     let content = format!("{}\n{}\n{}", heading, separator, body);
 
     let _ = cmd.create_response(
