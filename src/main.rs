@@ -1,10 +1,11 @@
 use std::{collections::HashMap, process::ExitCode};
 
 use once_cell::sync::Lazy;
+use rand::{rngs::StdRng, Rng, SeedableRng};
 use serenity::all::{GatewayIntents};
 use tokio::sync::{Mutex, MutexGuard};
 
-use crate::data_management::{database_manager::{self}, user_data_cache::UserCache};
+use crate::{data_management::{database_manager::{self}, user_data_cache::UserCache}, heroguy_gatcha::item_rarities::ItemRarity};
 
 
 
@@ -21,6 +22,11 @@ pub static ITEM_LOOKUP_TABLE: Lazy<HashMap<u64, &'static str>> = Lazy::new(|| {
     m.insert(2, "T1 Quill");
     m.insert(3, "T1 Paper");
     m
+});
+
+static RNG: Lazy<Mutex<StdRng>> = Lazy::new(|| {
+    let seed = 42;
+    Mutex::new(StdRng::seed_from_u64(seed))
 });
 
 #[tokio::main]
@@ -53,4 +59,14 @@ pub fn get_item_name_from_id(id: u64) -> String{
 #[allow(dead_code)]
 fn run_tests() {
     database_manager::test_db();
+}
+
+
+pub async fn gen_random() -> u32 {
+    let mut rng = RNG.lock().await;
+    rng.random()
+}
+
+pub fn item_id_to_rarity(_id: u64) -> ItemRarity {
+    ItemRarity::Common
 }
