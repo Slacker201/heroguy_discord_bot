@@ -1,0 +1,5 @@
+/target
+/.vscode
+/file.db
+/my_db.db
+bot_token.txt

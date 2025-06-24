@@ -1,0 +1,50 @@
+use std::{collections::HashMap, process::ExitCode};
+
+use once_cell::sync::Lazy;
+use serenity::all::{GatewayIntents};
+use tokio::sync::{Mutex, MutexGuard};
+
+use crate::data_management::{database_manager::{self}, user_data_cache::UserCache};
+
+
+
+mod bot_init;
+mod data_management;
+mod commands;
+mod heroguy_gatcha;
+mod command_utils;
+
+static USER_CACHE: Lazy<Mutex<UserCache>> = Lazy::new(|| Mutex::new(UserCache::new("my_db.db")));
+pub static ITEM_LOOKUP_TABLE: Lazy<HashMap<u64, &'static str>> = Lazy::new(|| {
+    let mut m = HashMap::new();
+    m.insert(1, "Ink");
+    m.insert(2, "T1 Quill");
+    m.insert(3, "T1 Paper");
+    m
+});
+
+#[tokio::main]
+async fn main() -> ExitCode{
+    println!("Running");
+    let token;
+    match bot_init::load_token("bot_token.txt") {
+        Ok(token1) => token = token1,
+        Err(err) => {
+            println!("Recieved Error: {}. Sh", err);
+            return ExitCode::FAILURE
+        },
+    }
+    let intents = GatewayIntents::GUILD_MEMBERS | GatewayIntents::GUILD_MESSAGES | GatewayIntents:: DIRECT_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
+    bot_init::init_client(token, intents).await;
+    ExitCode::SUCCESS
+}
+
+pub async fn get_user_cache() -> MutexGuard<'static, UserCache> {
+    USER_CACHE.lock().await
+}
+
+
+#[allow(dead_code)]
+fn run_tests() {
+    database_manager::test_db();
+}
