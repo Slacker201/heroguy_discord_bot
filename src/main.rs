@@ -43,6 +43,12 @@ pub async fn get_user_cache() -> MutexGuard<'static, UserCache> {
     USER_CACHE.lock().await
 }
 
+pub fn get_item_name_from_id(id: u64) -> String{
+    match ITEM_LOOKUP_TABLE.get(&id) {
+        Some(name) => name.to_string(),
+        None => id.to_string(),
+    }
+}
 
 #[allow(dead_code)]
 fn run_tests() {
