@@ -4,7 +4,7 @@ use serenity::{
     all::Interaction, async_trait, model::{gateway::Ready}, prelude::*
 };
 
-use crate::{commands::*, heroguy_gatcha::{cmd_add_item, cmd_remove_item, cmd_view_inventory}};
+use crate::{commands::*, heroguy_gatcha::{cmd_add_item, cmd_gatcha_draw, cmd_remove_item, cmd_view_inventory}};
 
 struct Handler;
 
@@ -14,21 +14,16 @@ struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     /// load commands in this function. Only load them when options or name changes, otherwise it just slows down initlialization
-    async fn ready(&self, _context: Context, ready: Ready) {
+    async fn ready(&self, context: Context, ready: Ready) {
         println!("Creating Commands");
         // Init commands
-        /*cmd_ping::load_command(&context).await;
-        cmd_eping::load_command(&context).await;
-        cmd_echo::load_command(&context).await;
-        cmd_view_inventory::load_command(&context).await;
-        cmd_add_item::load_command(&context).await;
-        cmd_remove_item::load_command(&context).await;*/
+        
         // Log connection
         println!("{} is connected!", ready.user.name);
     }
 
 
-    // Listen for commands here
+    /// Listen for commands here
     async fn interaction_create(&self, context: Context, interaction: Interaction) {
         if let Interaction::Command(command) = &interaction {
             println!("Recieved command {} from user {}", command.data.name, command.user.id);
@@ -51,13 +46,16 @@ impl EventHandler for Handler {
                 "removeitem" => {
                     cmd_remove_item::run_command(command, context, &interaction).await;
                 }
+                "draw" => {
+                    cmd_gatcha_draw::run_command(command, context, &interaction).await;
+                }
                 _ => {}
             }
         }
     }
 }
 
-/// Create the client. Im not sure what this does except create the client
+/// Create the client
 pub async fn init_client(token: String, intents: GatewayIntents) {
 
 
@@ -69,7 +67,7 @@ pub async fn init_client(token: String, intents: GatewayIntents) {
         println!("Client error: {:?}", why);
     }
 }
-/// this loads the token from a file. 
+/// load_token loads the bot token from the supplied file path
 pub fn load_token(path: &str) -> Result<String, Error> {
     let mut file = File::open(path)?;
     let mut buf = Vec::new();
