@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use bincode::{Decode, Encode};
 
-use crate::ITEM_LOOKUP_TABLE;
+use crate::{get_item_name_from_id};
 
 
 
@@ -29,15 +29,7 @@ impl UserData {
         let mut r = String::new();
 
         for item in self.inventory {
-            let name: &str;
-            match ITEM_LOOKUP_TABLE.get(&item.0) {
-                Some(name1) => {
-                    name = name1;
-                },
-                None => {
-                    name = "Invalid Item"
-                },
-            }
+            let name = get_item_name_from_id(item.1.id);
             r += &format!("{} {}\n", item.1.count, name)
         }
         r.trim().to_owned()
