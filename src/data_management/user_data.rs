@@ -33,7 +33,8 @@ impl UserData {
 
         for item in self.inventory {
             let name = get_item_name_from_id(item.1.id);
-            r += &format!("{} {}\n", item.1.count, name)
+            let rarity = item.1.rarity;
+            r += &format!("{} {:?} {}\n", item.1.count, rarity, name)
         }
         r.trim().to_owned()
     }
