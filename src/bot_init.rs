@@ -17,7 +17,8 @@ impl EventHandler for Handler {
     async fn ready(&self, context: Context, ready: Ready) {
         println!("Creating Commands");
         // Init commands
-        
+
+        let _ = context;
         // Log connection
         println!("{} is connected!", ready.user.name);
     }
