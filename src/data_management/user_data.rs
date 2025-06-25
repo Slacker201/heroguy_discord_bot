@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use bincode::{Decode, Encode};
 
-use crate::{get_item_name_from_id, heroguy_gatcha::{gatcha_chance::GatchaChance, item_rarities::ItemRarity}, item_id_to_rarity};
+use crate::{data_management::item_manager, heroguy_gatcha::{gatcha_chance::GatchaChance, item_rarities::ItemRarity}};
 
 
 
@@ -12,7 +12,7 @@ pub struct UserData {
     pub id: u64,
     xp: u128,
     inventory: HashMap<u64, Item>,
-    gatcha_chance: GatchaChance
+    pub gatcha_chance: GatchaChance
     
 }
 #[derive(Encode, Decode, PartialEq, Debug, Clone)]
@@ -32,7 +32,7 @@ impl UserData {
         let mut r = String::new();
 
         for item in self.inventory {
-            let name = get_item_name_from_id(item.1.id);
+            let name = item_manager::get_item_name_from_id(item.1.id);
             let rarity = item.1.rarity;
             r += &format!("{} {:?} {}\n", item.1.count, rarity, name)
         }
@@ -47,7 +47,7 @@ impl UserData {
                 id,
                 count: count as u128,
                 metadata: Vec::new(),
-                rarity: item_id_to_rarity(id),
+                rarity: item_manager::item_id_to_rarity(id),
             });
     }
 

@@ -1,11 +1,11 @@
-use std::{collections::HashMap, process::ExitCode};
+use std::process::ExitCode;
 
 use once_cell::sync::Lazy;
-use rand::{rngs::StdRng, Rng, SeedableRng};
+use rand::{rngs::StdRng, seq::IndexedRandom, Rng, SeedableRng};
 use serenity::all::{GatewayIntents};
 use tokio::sync::{Mutex, MutexGuard};
 
-use crate::{data_management::{database_manager::{self}, user_data_cache::UserCache}, heroguy_gatcha::item_rarities::ItemRarity};
+use crate::data_management::{database_manager::{self}, user_data_cache::UserCache};
 
 
 
@@ -16,13 +16,6 @@ mod heroguy_gatcha;
 mod command_utils;
 
 static USER_CACHE: Lazy<Mutex<UserCache>> = Lazy::new(|| Mutex::new(UserCache::new("my_db.db")));
-pub static ITEM_LOOKUP_TABLE: Lazy<HashMap<u64, &'static str>> = Lazy::new(|| {
-    let mut m = HashMap::new();
-    m.insert(1, "Ink");
-    m.insert(2, "T1 Quill");
-    m.insert(3, "T1 Paper");
-    m
-});
 
 static RNG: Lazy<Mutex<StdRng>> = Lazy::new(|| {
     let seed = 42;
@@ -49,12 +42,7 @@ pub async fn get_user_cache() -> MutexGuard<'static, UserCache> {
     USER_CACHE.lock().await
 }
 
-pub fn get_item_name_from_id(id: u64) -> String{
-    match ITEM_LOOKUP_TABLE.get(&id) {
-        Some(name) => name.to_string(),
-        None => id.to_string(),
-    }
-}
+
 
 #[allow(dead_code)]
 fn run_tests() {
@@ -67,6 +55,8 @@ pub async fn gen_random() -> u32 {
     rng.random()
 }
 
-pub fn item_id_to_rarity(_id: u64) -> ItemRarity {
-    ItemRarity::Common
+
+pub async fn pick_random<T>(vector: &[T]) -> Option<&T> {
+    let mut rng = RNG.lock().await;
+    vector.choose(&mut *rng)
 }
